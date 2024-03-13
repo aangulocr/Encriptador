@@ -6,37 +6,36 @@ const cifrarTxt = document.getElementById("cifrar");
 const descifrarTxt = document.getElementById("descifrar");
 
 const codigos = [
-  { numero: 1, letra: "A" },
-  { numero: 2, letra: "B" },
-  { numero: 3, letra: "C" },
-  { numero: 4, letra: "D" },
-  { numero: 5, letra: "E" },
-  { numero: 6, letra: "F" },
-  { numero: 7, letra: "G" },
-  { numero: 8, letra: "H" },
-  { numero: 9, letra: "I" },
-  { numero: 10, letra: "J" },
-  { numero: 11, letra: "K" },
-  { numero: 12, letra: "L" },
-  { numero: 13, letra: "M" },
-  { numero: 14, letra: "N" },
-  { numero: 15, letra: "O" },
-  { numero: 16, letra: "P" },
-  { numero: 17, letra: "Q" },
-  { numero: 18, letra: "R" },
-  { numero: 19, letra: "S" },
-  { numero: 20, letra: "T" },
-  { numero: 21, letra: "U" },
-  { numero: 22, letra: "V" },
-  { numero: 23, letra: "W" },
-  { numero: 24, letra: "X" },
-  { numero: 25, letra: "Y" },
-  { numero: 26, letra: "Z" },
+  {"numero": 1,"letra": "A"},
+  {"numero": 2,"letra": "B"},
+  {"numero": 3,"letra": "C"},
+  {"numero": 4,"letra": "D"},
+  {"numero": 5,"letra": "E"},
+  {"numero": 6,"letra": "F"},
+  {"numero": 7,"letra": "G"},
+  {"numero": 8,"letra": "H"},
+  {"numero": 9,"letra": "I"},
+  {"numero": 10,"letra": "J"},
+  {"numero": 11,"letra": "K"},
+  {"numero": 12,"letra": "L"},
+  {"numero": 13,"letra": "M"},
+  {"numero": 14,"letra": "N"},
+  {"numero": 15,"letra": "O"},
+  {"numero": 16,"letra": "P"},
+  {"numero": 17,"letra": "Q"},
+  {"numero": 18,"letra": "R"},
+  {"numero": 19,"letra": "S"},
+  {"numero": 20,"letra": "T"},
+  {"numero": 21,"letra": "U"},
+  {"numero": 22,"letra": "V"},
+  {"numero": 23,"letra": "W"},
+  {"numero": 24,"letra": "X"},
+  {"numero": 25,"letra": "Y"},
+  {"numero": 26,"letra": "Z"}
 ];
 
-// *****************************************************
-// *****************************************************
-// *****************************************************
+const codigoSize = codigos.length;
+let numMagico = getRandomInt();
 
 btnCifrar.addEventListener("click", function () {
   const texto = cifrarTxt.value;
@@ -44,13 +43,14 @@ btnCifrar.addEventListener("click", function () {
     alert("Debe ingresar Texto");
   } else {
     // llamar a función para cifrar texto
-    // Limpia el TextArea antes de cifrar
-
     if (texto.substring(0, 2) === "##") {
-      alert("El Texto está Cifrado, debe dar clic en Descifrar");
-    } else {
-      descifrarTxt.value = getCifrado(texto);
+      alert("EL TEXTO ESTÁ CIFRADO, DAR CLIC EN DESCIFRAR O ESCRIBIR NUEVO TEXTO");
+    }else{
+      numMagico = getRandomInt();
+      let salida = codec(true, texto);
+      descifrarTxt.value = "##" + numCodigo(numMagico) + salida + "##";
     }
+      
   }
 });
 
@@ -60,24 +60,11 @@ btnDescifrar.addEventListener("click", function () {
     alert("Debe ingresar Texto");
   } else {
     // llamar a función para descifrar texto
-    console.log(texto);
     if (texto.substring(0, 2) === "##") {
-      // console.log("Texto esta cifrado...");
-      // Llamar a función Descifrar();
-
-      //******** aquí codigo para descrifrar ********
-      let numCodigo = getCodigo(texto.substring(2, 3));
-      let txtSinCodigo = texto.substring(3, texto.length - 2);
-
-      let textoDescifrado = getDescifrar(numCodigo, txtSinCodigo);
-      console.log("Mensaje Descifrado: " + textoDescifrado.toUpperCase());
-      descifrarTxt.value = textoDescifrado;
-
-      // descifrarTxt.value = "vamos a descifrar " + numCodigo + " Texto Limpio: " + txtSinCodigo;
-    } else {
-      alert("NO ES UN TEXTO CIFRADO, VERIFICAR o DAR CLIC EN BOTÓN COPIAR");
+      descifrarTxt.value = codec(false, texto);
+    }else{
+      alert("EL TEXTO NO ESTÁ CIFRADO, DAR CLIC EN CIFRAR Y LUEGO DAR CLIC EN COPIAR");
     }
-    // descifrarTxt.value = texto;
   }
 });
 
@@ -87,7 +74,6 @@ btnCopiar.addEventListener("click", function () {
     alert("No hay texto Cifrado");
   } else {
     // llamar a función para descifrar texto
-    console.log(texto);
     cifrarTxt.value = texto;
   }
 });
@@ -99,57 +85,65 @@ function getRandomInt() {
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
 }
 
-// *************************************************
-//     Función para Cifrar el mensaje enviado
-// *************************************************
+// Funcion para Codificar y Decodificar
+function codec(cod, strTexto){
 
-function getCifrado(textoPlano) {
-  const codigosSize = codigos.length;
-  const numMagico = getRandomInt();
-
+  let nuevoTexto="";
   let objCodigo;
-  let strLetra;
-  let numLetra;
-  let letraDisponibles;
-  let cuentaLetras;
-  let sumaLetras;
-  let nuevaLetra;
+  let charCodigo;
+  let espacio;
 
-  console.log("Funcion getCifrado: " + textoPlano);
-
-  var textoCifrado = "";
-
-  for (var indexLetra in textoPlano) {
-    let charText = textoPlano[indexLetra].toUpperCase();
-
-    objCodigo = codigos.find((sletra) => sletra.letra == charText);
-    if (objCodigo === undefined) {
-      textoCifrado += charText;
-    } else {
-      strLetra = objCodigo.letra;
-      numLetra = objCodigo.numero;
-
-      letraDisponibles = codigosSize - numLetra;
-      cuentaLetras = numMagico - letraDisponibles;
-      sumaLetras = 0;
-
-      if (cuentaLetras > 0) {
-        sumaLetras = cuentaLetras;
-      } else {
-        sumaLetras = numLetra + numMagico;
-      }
-
-      nuevaLetra = codigos.find((nLetra) => nLetra.numero === sumaLetras);
-      textoCifrado += nuevaLetra.letra;
-      // console.log("Nueva Letra es: " + nuevaLetra.letra);
-    }
+  if (strTexto.substring(0, 2) === "##") {
+    charCodigo = strCodigo(strTexto.substring(2, 3));
+    strTexto = strTexto.substring(3, strTexto.length - 2);
   }
+  
+  for(var indexLetra in strTexto) {
+    let charText = strTexto[indexLetra].toUpperCase();
+ 
+      objCodigo = codigos.find((sletra) => sletra.letra == charText);
+      
+      // Si no encuentra letra en objeto de Códigos = undefined No lo codifica...
+      if (objCodigo === undefined) {
+        nuevoTexto += charText;
+      } else { // Codifica el caracter
+        let strLetra = objCodigo.letra;
+        let numLetra = objCodigo.numero;
+        let mover;
 
-  // Verifica el código de Cifrado
+        // Codifica el Texto
+        if(cod == true){
+          espacio = codigoSize - numLetra;
+          if(espacio < numMagico){
+            mover = numMagico - (codigoSize - numLetra);
+          }else{
+            mover = numLetra + numMagico;
+          }
+        // Decodifica el Texto
+        }else{
+          espacio = numLetra - 1;
+          if(espacio >= charCodigo){
+            mover = numLetra - charCodigo;
+          }else{
+            mover = codigoSize + (numLetra - charCodigo) ;
+          }
+        }
+        
+        let nuevaLetra = codigos.find(nLetra => nLetra.numero === mover);
+        // console.log("Nueva Letra es: " + nuevaLetra.letra);
+       nuevoTexto += nuevaLetra.letra;
+      }
+      
+  }
+  // console.log(numCodigo(numMagico) + nuevoTexto);
+  return nuevoTexto;
+  
+}
 
+function numCodigo(numeroCodigo){
   let codCifrado;
 
-  switch (numMagico) {
+  switch (numeroCodigo) {
     case 1:
       codCifrado = "R";
       break;
@@ -170,89 +164,34 @@ function getCifrado(textoPlano) {
       break;
   }
 
-  textoCifrado = "##" + codCifrado + textoCifrado + "##";
-  console.log(textoCifrado);
-  return textoCifrado;
+  return codCifrado;
+
 }
 
-// *************************************************
-//     Función para DesCifrar el mensaje enviado
-// *************************************************
+function strCodigo(letraCodigo){
+  let codCifrado;
 
-function getDescifrar(intCodigo, textoCifrado) {
-  const codigosSize = codigos.length;
-
-  let objCodigo;
-  let strLetra;
-  let numLetra;
-
-  let letraDisponibles;
-  let cuentaLetras;
-  let sumaLetras;
-  let nuevaLetra;
-
-  var textoDesCifrado = "";
-
-  for (var indexLetra in textoCifrado) {
-    let charText = textoCifrado[indexLetra].toUpperCase();
-
-    objCodigo = codigos.find((sletra) => sletra.letra === charText);
-    if (objCodigo === undefined) {
-      textoDesCifrado += charText;
-    } else {
-      strLetra = objCodigo.letra;
-      numLetra = objCodigo.numero;
-
-      letraDisponibles = numLetra - intCodigo;
-      cuentaLetras = codigosSize + letraDisponibles;
-      sumaLetras = 0;
-
-      if (cuentaLetras > 0) {
-        sumaLetras = cuentaLetras;
-      } else {
-        sumaLetras = codigosSize + letraDisponibles;
-      }
-
-      nuevaLetra = codigos.find((nLetra) => nLetra.numero === letraDisponibles);
-
-      if (nuevaLetra === undefined) {
-        textoDesCifrado += charText;
-        console.log("charText Undefined " + charText);
-      } else {
-        textoDesCifrado += nuevaLetra.letra;
-        console.log("charText " + charText);
-      }
-    }
-
-    // console.log("Salida NumeroLetra: " + numLetra);
-    // console.log("Salida letrasDisponibles: " + letraDisponibles);
-    // console.log("Salida cuentaLetras: " + cuentaLetras);
-    // console.log("Salida sumaLetras " + sumaLetras);
-  }
-  return textoDesCifrado;
-}
-
-function getCodigo(strCodigo) {
-  let intNum;
-  switch (strCodigo) {
+  switch (letraCodigo) {
     case "R":
-      intNum = 1;
+      codCifrado = "1";
       break;
     case "S":
-      intNum = 2;
+      codCifrado = "2";
       break;
     case "T":
-      intNum = 3;
+      codCifrado = "3";
       break;
     case "X":
-      intNum = 4;
+      codCifrado = "4";
       break;
     case "Y":
-      intNum = 5;
+      codCifrado = "5";
       break;
     case "Z":
-      intNum = 6;
+      codCifrado = "6";
       break;
   }
-  return intNum;
+
+  return codCifrado;
+
 }
